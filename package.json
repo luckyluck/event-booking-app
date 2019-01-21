@@ -1,0 +1,27 @@
+{
+  "name": "event-booking-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luckyluck/event-booking-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/luckyluck/event-booking-api/issues"
+  },
+  "homepage": "https://github.com/luckyluck/event-booking-api#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "express-graphql": "^0.7.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9"
+  }
+}
