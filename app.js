@@ -2,10 +2,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const graphqlHttp = require('express-graphql');
 const { buildSchema } = require('graphql');
+const mongoose = require('mongoose');
+
+const Event = require('./models/Event');
 
 const app = express();
-
-const events = [];
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -40,22 +41,43 @@ app.use('/graphql', graphqlHttp({
     }
   `),
   rootValue: {
-    events: () => events,
+    events: () => {
+      return Event.find()
+        .then(events => {
+          return events.map(event => {
+            return { ...event._doc };
+          });
+        })
+        .catch(err => {
+          throw err
+        });
+    },
     createEvent: args => {
-      const event = {
-        _id: Math.random().toString(),
+      const event = new Event({
         title: args.eventInput.title,
         description: args.eventInput.description,
-        price: parseFloat(args.eventInput.price),
-        date: new Date().toISOString()
-      };
-      events.push(event);
+        price: parseFloat(args.eventInput.price)
+      });
 
-      return event;
+      return event.save()
+        .then(result => {
+          return { ...result._doc };
+        })
+        .catch(err => {
+          throw err
+        });
     }
   },
   graphiql: true
 }));
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true })
+  .then(() => console.log('Connected to the DB'))
+  .catch(err => console.log(err));
+// Turn off deprecation
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
 
 app.listen(3000, () => {
   console.log('Active on port 3000');
